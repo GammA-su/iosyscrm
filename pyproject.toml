@@ -1,0 +1,72 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "prospect-crm"
+description = "CRM de prospection B2B IOSYS — collecte SIRENE, enrichissement, scoring"
+requires-python = ">=3.13"
+dynamic = ["version"]
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "sqlalchemy>=2.0.36",
+    "alembic>=1.14",
+    "psycopg[binary]>=3.2",
+    "pydantic>=2.10",
+    "pydantic-settings>=2.7",
+    "httpx>=0.28",
+    "selectolax>=0.3.27",
+    "jinja2>=3.1",
+    "python-multipart>=0.0.20",
+    "argon2-cffi>=23.1",
+    "itsdangerous>=2.2",
+    "apscheduler>=3.11",
+    "typer>=0.15",
+    "structlog>=24.4",
+    "tenacity>=9.0",
+    "email-validator>=2.2",
+    "phonenumbers>=8.13",
+    "python-dateutil>=2.9",
+]
+
+[project.scripts]
+crm = "app.cli:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "respx>=0.22",
+    "factory-boy>=3.3",
+    "testcontainers[postgres]>=4.9",
+    "ruff>=0.8",
+    "mypy>=1.14",
+    "types-python-dateutil",
+]
+
+[tool.hatch.version]
+path = "app/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+strict = true
+python_version = "3.13"
+plugins = ["sqlalchemy.ext.mypy.plugin"]
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_decorators = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

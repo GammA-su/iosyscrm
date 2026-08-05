@@ -1,0 +1,10 @@
+# Reverse proxy avec TLS automatique.
+# Renseigner le domaine réel et l'adresse de contact ACME avant la mise en prod.
+{
+	email {$CADDY_ACME_EMAIL:admin@iosys.fr}
+}
+
+{$CADDY_DOMAIN:localhost} {
+	encode zstd gzip
+	reverse_proxy app:8000
+}
