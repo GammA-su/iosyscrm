@@ -1,0 +1,104 @@
+{
+  "header": {
+    "statut": 200,
+    "message": "OK",
+    "total": 6,
+    "nombre": 2,
+    "curseur": "AoEpMTIzNDU2Nzg5MDAwMTU=",
+    "curseurSuivant": "AoEpOTg3NjU0MzIxMDAwMjM="
+  },
+  "etablissements": [
+    {
+      "siren": "912345680",
+      "nic": "00017",
+      "siret": "91234568000017",
+      "statutDiffusionEtablissement": "O",
+      "dateCreationEtablissement": "2026-06-15",
+      "trancheEffectifsEtablissement": "NN",
+      "anneeEffectifsEtablissement": null,
+      "activitePrincipaleRegistreMetiersEtablissement": null,
+      "dateDernierTraitementEtablissement": "2026-06-20T08:15:44",
+      "etablissementSiege": true,
+      "nombrePeriodesEtablissement": 1,
+      "activitePrincipaleNAF25Etablissement": "68.31Y",
+      "uniteLegale": {
+        "denominationUniteLegale": "STRASBOURG IMMOBILIER CONSEIL",
+        "sexeUniteLegale": null,
+        "nomUniteLegale": null,
+        "prenom1UniteLegale": null,
+        "prenom2UniteLegale": null,
+        "prenom3UniteLegale": null,
+        "prenom4UniteLegale": null,
+        "prenomUsuelUniteLegale": null,
+        "pseudonymeUniteLegale": null,
+        "categorieJuridiqueUniteLegale": "5499",
+        "trancheEffectifsUniteLegale": "01"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "27",
+        "typeVoieEtablissement": "QUAI",
+        "libelleVoieEtablissement": "DES BATELIERS",
+        "complementAdresseEtablissement": null,
+        "codePostalEtablissement": "67000",
+        "libelleCommuneEtablissement": "STRASBOURG",
+        "codeCommuneEtablissement": "67482"
+      },
+      "adresse2Etablissement": null,
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-06-15",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "68.31Z",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    },
+    {
+      "siren": "912345681",
+      "nic": "00025",
+      "siret": "91234568100025",
+      "statutDiffusionEtablissement": "O",
+      "dateCreationEtablissement": "2026-06-16",
+      "trancheEffectifsEtablissement": "02",
+      "anneeEffectifsEtablissement": "2025",
+      "activitePrincipaleRegistreMetiersEtablissement": null,
+      "dateDernierTraitementEtablissement": "2026-06-20T11:53:10",
+      "etablissementSiege": true,
+      "nombrePeriodesEtablissement": 1,
+      "activitePrincipaleNAF25Etablissement": "43.32B",
+      "uniteLegale": {
+        "denominationUniteLegale": "BELFORT MENUISERIE",
+        "sexeUniteLegale": null,
+        "nomUniteLegale": null,
+        "prenom1UniteLegale": null,
+        "prenom2UniteLegale": null,
+        "prenom3UniteLegale": null,
+        "prenom4UniteLegale": null,
+        "prenomUsuelUniteLegale": null,
+        "pseudonymeUniteLegale": null,
+        "categorieJuridiqueUniteLegale": "5710",
+        "trancheEffectifsUniteLegale": "02"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "9",
+        "typeVoieEtablissement": "RUE",
+        "libelleVoieEtablissement": "DE L INDUSTRIE",
+        "complementAdresseEtablissement": null,
+        "codePostalEtablissement": "90000",
+        "libelleCommuneEtablissement": "BELFORT",
+        "codeCommuneEtablissement": "90010"
+      },
+      "adresse2Etablissement": null,
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-06-16",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "43.32A",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    }
+  ]
+}

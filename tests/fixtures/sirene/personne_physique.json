@@ -1,0 +1,58 @@
+{
+  "header": {
+    "statut": 200,
+    "message": "OK",
+    "total": 1,
+    "nombre": 1,
+    "curseur": "*",
+    "curseurSuivant": "*"
+  },
+  "etablissements": [
+    {
+      "siren": "914222333",
+      "nic": "00018",
+      "siret": "91422233300018",
+      "statutDiffusionEtablissement": "O",
+      "dateCreationEtablissement": "2026-04-02",
+      "trancheEffectifsEtablissement": "NN",
+      "anneeEffectifsEtablissement": null,
+      "activitePrincipaleRegistreMetiersEtablissement": null,
+      "dateDernierTraitementEtablissement": "2026-04-07T15:31:59",
+      "etablissementSiege": true,
+      "nombrePeriodesEtablissement": 1,
+      "activitePrincipaleNAF25Etablissement": "96.02B",
+      "uniteLegale": {
+        "denominationUniteLegale": null,
+        "sexeUniteLegale": "F",
+        "nomUniteLegale": "SCHMITT",
+        "prenom1UniteLegale": "Marie",
+        "prenom2UniteLegale": "Claire",
+        "prenom3UniteLegale": null,
+        "prenom4UniteLegale": null,
+        "prenomUsuelUniteLegale": "Marie",
+        "pseudonymeUniteLegale": "MC CREATIONS",
+        "categorieJuridiqueUniteLegale": "1000",
+        "trancheEffectifsUniteLegale": "00"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "7",
+        "typeVoieEtablissement": "RUE",
+        "libelleVoieEtablissement": "DU GENERAL DE GAULLE",
+        "complementAdresseEtablissement": null,
+        "codePostalEtablissement": "68500",
+        "libelleCommuneEtablissement": "GUEBWILLER",
+        "codeCommuneEtablissement": "68112"
+      },
+      "adresse2Etablissement": null,
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-04-02",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "96.02A",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    }
+  ]
+}

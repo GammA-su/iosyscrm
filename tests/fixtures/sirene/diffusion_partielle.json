@@ -1,0 +1,58 @@
+{
+  "header": {
+    "statut": 200,
+    "message": "OK",
+    "total": 1,
+    "nombre": 1,
+    "curseur": "*",
+    "curseurSuivant": "*"
+  },
+  "etablissements": [
+    {
+      "siren": "913000111",
+      "nic": "00014",
+      "siret": "91300011100014",
+      "statutDiffusionEtablissement": "P",
+      "dateCreationEtablissement": "2026-05-04",
+      "trancheEffectifsEtablissement": null,
+      "anneeEffectifsEtablissement": null,
+      "activitePrincipaleRegistreMetiersEtablissement": null,
+      "dateDernierTraitementEtablissement": "2026-05-09T10:00:00",
+      "etablissementSiege": true,
+      "nombrePeriodesEtablissement": 1,
+      "activitePrincipaleNAF25Etablissement": null,
+      "uniteLegale": {
+        "denominationUniteLegale": null,
+        "sexeUniteLegale": null,
+        "nomUniteLegale": null,
+        "prenom1UniteLegale": null,
+        "prenom2UniteLegale": null,
+        "prenom3UniteLegale": null,
+        "prenom4UniteLegale": null,
+        "prenomUsuelUniteLegale": null,
+        "pseudonymeUniteLegale": null,
+        "categorieJuridiqueUniteLegale": "1000",
+        "trancheEffectifsUniteLegale": null
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": null,
+        "typeVoieEtablissement": null,
+        "libelleVoieEtablissement": null,
+        "complementAdresseEtablissement": null,
+        "codePostalEtablissement": null,
+        "libelleCommuneEtablissement": "MULHOUSE",
+        "codeCommuneEtablissement": "68224"
+      },
+      "adresse2Etablissement": null,
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-05-04",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": null,
+          "nomenclatureActivitePrincipaleEtablissement": null
+        }
+      ]
+    }
+  ]
+}

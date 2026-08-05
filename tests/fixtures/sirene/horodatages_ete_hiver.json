@@ -1,0 +1,104 @@
+{
+  "header": {
+    "statut": 200,
+    "message": "OK",
+    "total": 2,
+    "nombre": 2,
+    "curseur": "*",
+    "curseurSuivant": "*"
+  },
+  "etablissements": [
+    {
+      "siren": "916000111",
+      "nic": "00015",
+      "siret": "91600011100015",
+      "statutDiffusionEtablissement": "O",
+      "dateCreationEtablissement": "2026-07-10",
+      "trancheEffectifsEtablissement": "NN",
+      "anneeEffectifsEtablissement": null,
+      "activitePrincipaleRegistreMetiersEtablissement": null,
+      "dateDernierTraitementEtablissement": "2026-07-15T14:30:00",
+      "etablissementSiege": true,
+      "nombrePeriodesEtablissement": 1,
+      "activitePrincipaleNAF25Etablissement": "43.21B",
+      "uniteLegale": {
+        "denominationUniteLegale": "ETE SOLAIRE ALSACE",
+        "sexeUniteLegale": null,
+        "nomUniteLegale": null,
+        "prenom1UniteLegale": null,
+        "prenom2UniteLegale": null,
+        "prenom3UniteLegale": null,
+        "prenom4UniteLegale": null,
+        "prenomUsuelUniteLegale": null,
+        "pseudonymeUniteLegale": null,
+        "categorieJuridiqueUniteLegale": "5710",
+        "trancheEffectifsUniteLegale": "01"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "2",
+        "typeVoieEtablissement": "RUE",
+        "libelleVoieEtablissement": "DU SOLEIL",
+        "complementAdresseEtablissement": null,
+        "codePostalEtablissement": "68000",
+        "libelleCommuneEtablissement": "COLMAR",
+        "codeCommuneEtablissement": "68066"
+      },
+      "adresse2Etablissement": null,
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-07-10",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "43.21A",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    },
+    {
+      "siren": "916000112",
+      "nic": "00013",
+      "siret": "91600011200013",
+      "statutDiffusionEtablissement": "O",
+      "dateCreationEtablissement": "2026-01-08",
+      "trancheEffectifsEtablissement": "NN",
+      "anneeEffectifsEtablissement": null,
+      "activitePrincipaleRegistreMetiersEtablissement": null,
+      "dateDernierTraitementEtablissement": "2026-01-15T14:30:00",
+      "etablissementSiege": true,
+      "nombrePeriodesEtablissement": 1,
+      "activitePrincipaleNAF25Etablissement": "43.22B",
+      "uniteLegale": {
+        "denominationUniteLegale": "HIVER CHAUFFAGE VOSGES",
+        "sexeUniteLegale": null,
+        "nomUniteLegale": null,
+        "prenom1UniteLegale": null,
+        "prenom2UniteLegale": null,
+        "prenom3UniteLegale": null,
+        "prenom4UniteLegale": null,
+        "prenomUsuelUniteLegale": null,
+        "pseudonymeUniteLegale": null,
+        "categorieJuridiqueUniteLegale": "5499",
+        "trancheEffectifsUniteLegale": "02"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "18",
+        "typeVoieEtablissement": "RUE",
+        "libelleVoieEtablissement": "DE LA NEIGE",
+        "complementAdresseEtablissement": null,
+        "codePostalEtablissement": "88000",
+        "libelleCommuneEtablissement": "EPINAL",
+        "codeCommuneEtablissement": "88160"
+      },
+      "adresse2Etablissement": null,
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-01-08",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "43.22A",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    }
+  ]
+}

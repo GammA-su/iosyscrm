@@ -58,9 +58,10 @@ Sessions serveur, pas de JWT : l'application est un monolithe à session, la ré
 
 - Hachage Argon2id, paramètres par défaut d'`argon2-cffi`.
 - Jeton de session : 32 octets aléatoires, transmis en cookie `HttpOnly`, `Secure` (hors développement), `SameSite=Lax`. Seul le SHA-256 est stocké.
-- Durée : 7 jours glissants, prolongée à chaque requête si plus de 24 h restantes.
+- Durée : 7 jours glissants. `expires_at` est prolongé à +7 jours dès qu'il reste **moins de 6 jours**, et pas avant : la prolongation est donc au plus quotidienne pour une session donnée. Prolonger à chaque requête produirait un `UPDATE` sur `sessions` à chaque appel HTTP, pour un gain nul.
 - Limitation : 5 tentatives échouées par adresse email et par tranche de 15 minutes.
 - Rôles : `admin` (tout, y compris utilisateurs et règles de scoring), `commercial` (tout sauf administration), `viewer` (lecture seule).
 - Création du premier administrateur : `uv run crm users create --email … --admin`. **Aucun compte par défaut dans les migrations.**
+- Le rôle se donne indifféremment par `--role admin|commercial|viewer` (valeur par défaut `commercial`) ou par le drapeau `--admin`, alias de `--role admin` employé par la procédure de démarrage de la section 14.4.
 
 ---

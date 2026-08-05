@@ -1,7 +1,9 @@
 """Fixtures partagées."""
 
-from collections.abc import Iterator
+import json
+from collections.abc import Callable, Iterator
 from pathlib import Path
+from typing import Any
 
 import pytest
 from fastapi import FastAPI
@@ -11,6 +13,8 @@ from app.config import Settings, get_settings
 from app.database.engine import get_engine, get_session_factory
 from app.main import create_app
 
+FIXTURES_DIR = Path(__file__).parent / "fixtures"
+
 TEST_ENV: dict[str, str] = {
     "APP_ENV": "development",
     "APP_SECRET_KEY": "k" * 64,
@@ -19,6 +23,18 @@ TEST_ENV: dict[str, str] = {
     "DATABASE_URL": "postgresql+psycopg://crm:crm@localhost:5432/prospectcrm_test",
     "MAIL_ENABLED": "false",
 }
+
+
+@pytest.fixture(scope="session")
+def load_fixture() -> Callable[[str], dict[str, Any]]:
+    """Charge une réponse d'API enregistrée dans `tests/fixtures/` (section 13.1)."""
+
+    def _load(relative_path: str) -> dict[str, Any]:
+        payload = json.loads((FIXTURES_DIR / relative_path).read_text(encoding="utf-8"))
+        assert isinstance(payload, dict)
+        return payload
+
+    return _load
 
 
 @pytest.fixture

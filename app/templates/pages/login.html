@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion — IOSYS Prospect CRM{% endblock %}
+
+{% block main_class %}container py-5{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-6 col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h1 class="h4 mb-1">IOSYS Prospect CRM</h1>
+          <p class="text-body-secondary small mb-4">Connexion à l'espace commercial.</p>
+
+          {% if error %}
+            <div class="alert alert-danger py-2" role="alert">{{ error }}</div>
+          {% endif %}
+
+          <form method="post" action="/login" novalidate>
+            <input type="hidden" name="next" value="{{ next_url }}">
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Adresse email</label>
+              <input type="email" class="form-control" id="email" name="email"
+                     value="{{ email }}" autocomplete="username" autofocus required>
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="form-label">Mot de passe</label>
+              <input type="password" class="form-control" id="password" name="password"
+                     autocomplete="current-password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

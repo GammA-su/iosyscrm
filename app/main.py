@@ -5,24 +5,21 @@ FastAPI les exécute dans un pool de threads (section 1.2).
 """
 
 from pathlib import Path
-from typing import Annotated
 
-from fastapi import Depends, FastAPI, Response
+from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
 from starlette.status import HTTP_503_SERVICE_UNAVAILABLE
 
 from app import __version__
+from app.api.web import auth as web_auth
 from app.config import get_settings
-from app.deps import get_db
+from app.deps import DbSession
 from app.exceptions import register_exception_handlers
 from app.logging import configure_logging, get_logger
 
 STATIC_DIR = Path(__file__).parent / "static"
-
-DbSession = Annotated[Session, Depends(get_db)]
 
 logger = get_logger(__name__)
 
@@ -41,6 +38,7 @@ def create_app() -> FastAPI:
 
     register_exception_handlers(app)
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+    app.include_router(web_auth.router)
 
     @app.get("/health")
     def health(db: DbSession, response: Response) -> dict[str, str]:

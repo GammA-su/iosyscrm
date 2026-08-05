@@ -1,0 +1,104 @@
+{
+  "header": {
+    "statut": 200,
+    "message": "OK",
+    "total": 6,
+    "nombre": 2,
+    "curseur": "AoEpOTg3NjU0MzIxMDAwMjM=",
+    "curseurSuivant": "AoEpOTg3NjU0MzIxMDAwMjM="
+  },
+  "etablissements": [
+    {
+      "siren": "912345682",
+      "nic": "00011",
+      "siret": "91234568200011",
+      "statutDiffusionEtablissement": "O",
+      "dateCreationEtablissement": "2026-06-17",
+      "trancheEffectifsEtablissement": "NN",
+      "anneeEffectifsEtablissement": null,
+      "activitePrincipaleRegistreMetiersEtablissement": null,
+      "dateDernierTraitementEtablissement": "2026-06-21T07:22:05",
+      "etablissementSiege": true,
+      "nombrePeriodesEtablissement": 1,
+      "activitePrincipaleNAF25Etablissement": "81.30Y",
+      "uniteLegale": {
+        "denominationUniteLegale": "EPINAL PAYSAGE",
+        "sexeUniteLegale": null,
+        "nomUniteLegale": null,
+        "prenom1UniteLegale": null,
+        "prenom2UniteLegale": null,
+        "prenom3UniteLegale": null,
+        "prenom4UniteLegale": null,
+        "prenomUsuelUniteLegale": null,
+        "pseudonymeUniteLegale": null,
+        "categorieJuridiqueUniteLegale": "5499",
+        "trancheEffectifsUniteLegale": "01"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "3",
+        "typeVoieEtablissement": "ROUTE",
+        "libelleVoieEtablissement": "DE NANCY",
+        "complementAdresseEtablissement": null,
+        "codePostalEtablissement": "88000",
+        "libelleCommuneEtablissement": "EPINAL",
+        "codeCommuneEtablissement": "88160"
+      },
+      "adresse2Etablissement": null,
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-06-17",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "81.30Z",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    },
+    {
+      "siren": "912345683",
+      "nic": "00029",
+      "siret": "91234568300029",
+      "statutDiffusionEtablissement": "O",
+      "dateCreationEtablissement": "2026-06-18",
+      "trancheEffectifsEtablissement": "NN",
+      "anneeEffectifsEtablissement": null,
+      "activitePrincipaleRegistreMetiersEtablissement": null,
+      "dateDernierTraitementEtablissement": "2026-06-21T16:44:38",
+      "etablissementSiege": true,
+      "nombrePeriodesEtablissement": 1,
+      "activitePrincipaleNAF25Etablissement": "70.22Y",
+      "uniteLegale": {
+        "denominationUniteLegale": "SAINT DENIS OCEAN INDIEN SERVICES",
+        "sexeUniteLegale": null,
+        "nomUniteLegale": null,
+        "prenom1UniteLegale": null,
+        "prenom2UniteLegale": null,
+        "prenom3UniteLegale": null,
+        "prenom4UniteLegale": null,
+        "prenomUsuelUniteLegale": null,
+        "pseudonymeUniteLegale": null,
+        "categorieJuridiqueUniteLegale": "5710",
+        "trancheEffectifsUniteLegale": "02"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "15",
+        "typeVoieEtablissement": "RUE",
+        "libelleVoieEtablissement": "JEAN CHATEL",
+        "complementAdresseEtablissement": null,
+        "codePostalEtablissement": "97400",
+        "libelleCommuneEtablissement": "SAINT-DENIS",
+        "codeCommuneEtablissement": "97411"
+      },
+      "adresse2Etablissement": null,
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-06-18",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "70.22Z",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    }
+  ]
+}

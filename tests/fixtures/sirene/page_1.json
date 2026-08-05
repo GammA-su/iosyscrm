@@ -1,0 +1,104 @@
+{
+  "header": {
+    "statut": 200,
+    "message": "OK",
+    "total": 6,
+    "nombre": 2,
+    "curseur": "*",
+    "curseurSuivant": "AoEpMTIzNDU2Nzg5MDAwMTU="
+  },
+  "etablissements": [
+    {
+      "siren": "912345678",
+      "nic": "00015",
+      "siret": "91234567800015",
+      "statutDiffusionEtablissement": "O",
+      "dateCreationEtablissement": "2026-06-12",
+      "trancheEffectifsEtablissement": "NN",
+      "anneeEffectifsEtablissement": null,
+      "activitePrincipaleRegistreMetiersEtablissement": null,
+      "dateDernierTraitementEtablissement": "2026-06-18T09:41:22",
+      "etablissementSiege": true,
+      "nombrePeriodesEtablissement": 1,
+      "activitePrincipaleNAF25Etablissement": "62.01Y",
+      "uniteLegale": {
+        "denominationUniteLegale": "ALSACE NUMERIQUE",
+        "sexeUniteLegale": null,
+        "nomUniteLegale": null,
+        "prenom1UniteLegale": null,
+        "prenom2UniteLegale": null,
+        "prenom3UniteLegale": null,
+        "prenom4UniteLegale": null,
+        "prenomUsuelUniteLegale": null,
+        "pseudonymeUniteLegale": null,
+        "categorieJuridiqueUniteLegale": "5710",
+        "trancheEffectifsUniteLegale": "02"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "12",
+        "typeVoieEtablissement": "RUE",
+        "libelleVoieEtablissement": "DES MARCHANDS",
+        "complementAdresseEtablissement": null,
+        "codePostalEtablissement": "68000",
+        "libelleCommuneEtablissement": "COLMAR",
+        "codeCommuneEtablissement": "68066"
+      },
+      "adresse2Etablissement": null,
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-06-12",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "62.01Z",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    },
+    {
+      "siren": "912345679",
+      "nic": "00023",
+      "siret": "91234567900023",
+      "statutDiffusionEtablissement": "O",
+      "dateCreationEtablissement": "2026-06-14",
+      "trancheEffectifsEtablissement": "01",
+      "anneeEffectifsEtablissement": "2025",
+      "activitePrincipaleRegistreMetiersEtablissement": null,
+      "dateDernierTraitementEtablissement": "2026-06-19T14:02:07",
+      "etablissementSiege": true,
+      "nombrePeriodesEtablissement": 1,
+      "activitePrincipaleNAF25Etablissement": "43.99D",
+      "uniteLegale": {
+        "denominationUniteLegale": "MULHOUSE BATIMENT SERVICES",
+        "sexeUniteLegale": null,
+        "nomUniteLegale": null,
+        "prenom1UniteLegale": null,
+        "prenom2UniteLegale": null,
+        "prenom3UniteLegale": null,
+        "prenom4UniteLegale": null,
+        "prenomUsuelUniteLegale": null,
+        "pseudonymeUniteLegale": null,
+        "categorieJuridiqueUniteLegale": "5499",
+        "trancheEffectifsUniteLegale": "03"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "4",
+        "typeVoieEtablissement": "AVENUE",
+        "libelleVoieEtablissement": "DE COLMAR",
+        "complementAdresseEtablissement": "BATIMENT B",
+        "codePostalEtablissement": "68100",
+        "libelleCommuneEtablissement": "MULHOUSE",
+        "codeCommuneEtablissement": "68224"
+      },
+      "adresse2Etablissement": null,
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-06-14",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "43.99C",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "header": {
+    "statut": 200,
+    "message": "OK"
+  },
+  "etatService": "UP",
+  "etatsDesServices": [
+    {
+      "Collection": "Unités Légales",
+      "etatCollection": "UP"
+    },
+    {
+      "Collection": "Établissements",
+      "etatCollection": "UP"
+    },
+    {
+      "Collection": "Liens de succession",
+      "etatCollection": "UP"
+    }
+  ],
+  "versionService": "3.11.95",
+  "journalDesModifications": "https://portail-api.insee.fr/catalog/api/2ba0e549-5587-3ef1-9082-99cd865de66f/doc?page=c34928ff-cb71-457c-8928-ffcb71557c5d",
+  "datesDernieresMisesAJourDesDonnees": [
+    {
+      "collection": "Unités Légales",
+      "dateDerniereMiseADisposition": "2026-08-05T07:20:41.000",
+      "dateDernierTraitementMaximum": "2026-08-05T00:05:54.033",
+      "dateDernierTraitementDeMasse": "2026-08-05T00:05:54.033"
+    },
+    {
+      "collection": "Établissements",
+      "dateDerniereMiseADisposition": "2026-08-05T07:20:43.000",
+      "dateDernierTraitementMaximum": "2026-08-05T00:05:52.648",
+      "dateDernierTraitementDeMasse": "2026-08-05T00:05:52.648"
+    },
+    {
+      "collection": "Liens de succession",
+      "dateDerniereMiseADisposition": "2026-08-05T07:20:44.000",
+      "dateDernierTraitementMaximum": "2026-08-04T23:25:51.815",
+      "dateDernierTraitementDeMasse": "2026-08-04T23:25:51.815"
+    }
+  ]
+}

@@ -10,9 +10,12 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.status import (
     HTTP_400_BAD_REQUEST,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_403_FORBIDDEN,
     HTTP_404_NOT_FOUND,
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_CONTENT,
+    HTTP_429_TOO_MANY_REQUESTS,
     HTTP_500_INTERNAL_SERVER_ERROR,
     HTTP_502_BAD_GATEWAY,
 )
@@ -60,6 +63,27 @@ class ValidationError(AppError):
     http_status = HTTP_422_UNPROCESSABLE_CONTENT
 
 
+class AuthenticationError(AppError):
+    """Session absente, invalide, expirée, ou compte désactivé (section 9)."""
+
+    code = "unauthenticated"
+    http_status = HTTP_401_UNAUTHORIZED
+
+
+class PermissionDeniedError(AppError):
+    """Rôle insuffisant pour l'opération demandée (section 9)."""
+
+    code = "forbidden"
+    http_status = HTTP_403_FORBIDDEN
+
+
+class RateLimitedError(AppError):
+    """Trop de tentatives de connexion échouées (section 9)."""
+
+    code = "too_many_attempts"
+    http_status = HTTP_429_TOO_MANY_REQUESTS
+
+
 class ExternalServiceError(AppError):
     """Échec d'un service tiers (SIRENE, societeinfo, SMTP…)."""
 
@@ -69,7 +93,10 @@ class ExternalServiceError(AppError):
 
 _HTTP_ERROR_CODES: dict[int, str] = {
     HTTP_400_BAD_REQUEST: "bad_request",
+    HTTP_401_UNAUTHORIZED: "unauthenticated",
+    HTTP_403_FORBIDDEN: "forbidden",
     HTTP_404_NOT_FOUND: "not_found",
+    HTTP_429_TOO_MANY_REQUESTS: "too_many_attempts",
     HTTP_409_CONFLICT: "conflict",
     HTTP_422_UNPROCESSABLE_CONTENT: "validation_error",
     HTTP_500_INTERNAL_SERVER_ERROR: "internal_error",

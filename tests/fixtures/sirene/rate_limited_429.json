@@ -1,0 +1,6 @@
+{
+  "header": {
+    "statut": 429,
+    "message": "Vous avez dépassé le nombre d'appels autorisés par minute."
+  }
+}
