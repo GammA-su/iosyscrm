@@ -50,7 +50,9 @@ def create_app() -> FastAPI:
             db.execute(text("SELECT 1"))
         except SQLAlchemyError as exc:
             db_state = "error"
-            logger.warning("health.db_unreachable", error=str(exc))
+            # Message tronqué, sans trace : la sonde s'exécute toutes les 30 s
+            # et une base durablement indisponible saturerait les journaux.
+            logger.warning("health.db_unreachable", error=str(exc)[:200])
 
         status = "ok" if db_state == "ok" else "degraded"
         if status != "ok":

@@ -1,0 +1,17 @@
+# Surcharges locales du poste de développement.
+#
+# Copier ce fichier en `docker-compose.override.yml` : Compose le charge
+# automatiquement, sans option de ligne de commande.
+#
+#     cp docker-compose.override.yml.example docker-compose.override.yml
+#
+# Le fichier réel est ignoré par git. Comme `docker-compose.yml` ne publie
+# aucun port PostgreSQL, un serveur qui ne possède pas cette surcharge
+# n'expose jamais la base — c'est la garantie recherchée.
+
+services:
+  postgres:
+    ports:
+      # Écoute sur la boucle locale uniquement : psql, DBeaver, pgAdmin et
+      # `make migrate` lancé depuis l'hôte. Jamais sur 0.0.0.0.
+      - "127.0.0.1:5432:5432"

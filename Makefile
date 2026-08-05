@@ -28,4 +28,3 @@ check: lint typecheck test
 
 seed:
 	@echo "Jeu de données de démonstration : disponible une fois le schéma livré (lot T1)."
-	@exit 1

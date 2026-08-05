@@ -61,7 +61,6 @@ select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
 [tool.mypy]
 strict = true
 python_version = "3.13"
-plugins = ["sqlalchemy.ext.mypy.plugin"]
 
 [[tool.mypy.overrides]]
 module = ["tests.*"]

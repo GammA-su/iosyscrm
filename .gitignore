@@ -19,6 +19,9 @@ htmlcov/
 .env.local
 .env.*.local
 
+# Surcharges Compose locales (voir docker-compose.override.yml.example)
+docker-compose.override.yml
+
 # Éditeurs / OS
 .idea/
 .vscode/

@@ -1,6 +1,7 @@
 """Fixtures partagées."""
 
 from collections.abc import Iterator
+from pathlib import Path
 
 import pytest
 from fastapi import FastAPI
@@ -21,8 +22,14 @@ TEST_ENV: dict[str, str] = {
 
 
 @pytest.fixture
-def settings(monkeypatch: pytest.MonkeyPatch) -> Iterator[Settings]:
-    """Configuration de test, isolée du `.env` du poste."""
+def settings(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[Settings]:
+    """Configuration de test, isolée du `.env` du poste.
+
+    `Settings` lit `.env` en chemin relatif : on bascule le répertoire courant
+    vers un dossier vide pour que seules les variables de `TEST_ENV` et les
+    valeurs par défaut soient prises en compte.
+    """
+    monkeypatch.chdir(tmp_path)
     for key, value in TEST_ENV.items():
         monkeypatch.setenv(key, value)
 

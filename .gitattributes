@@ -1,0 +1,40 @@
+# Développement sous Windows/WSL2, exécution sous Linux : tout fichier texte
+# est stocké et restitué en LF. Un Makefile ou un script shell en CRLF casse
+# à l'exécution dans les conteneurs.
+* text=auto eol=lf
+
+# Fichiers sans extension ou à extension non reconnue : on force explicitement.
+Makefile        text eol=lf
+Dockerfile      text eol=lf
+Caddyfile       text eol=lf
+.dockerignore   text eol=lf
+.gitignore      text eol=lf
+.gitattributes  text eol=lf
+.env.example    text eol=lf
+
+*.py            text eol=lf
+*.pyi           text eol=lf
+*.sh            text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+*.toml          text eol=lf
+*.cfg           text eol=lf
+*.ini           text eol=lf
+*.json          text eol=lf
+*.md            text eol=lf
+*.sql           text eol=lf
+*.html          text eol=lf
+*.css           text eol=lf
+*.js            text eol=lf
+*.txt           text eol=lf
+*.example       text eol=lf
+
+# Binaires : aucune conversion.
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.ico           binary
+*.woff          binary
+*.woff2         binary
+*.pdf           binary

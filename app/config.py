@@ -5,10 +5,15 @@ valeur par défaut. Aucun `os.getenv` ailleurs dans le code (section 4).
 """
 
 from functools import lru_cache
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import field_validator, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+
+# Les listes sont saisies en CSV dans le `.env` (section 4). `NoDecode` désactive
+# le décodage JSON que pydantic-settings applique par défaut aux champs complexes
+# lus depuis l'environnement, pour laisser `_parse_csv_list` faire le découpage.
+CsvList = Annotated[list[str], NoDecode]
 
 MIN_SECRET_KEY_LENGTH = 32
 
@@ -46,8 +51,8 @@ class Settings(BaseSettings):
     SIRENE_RATE_LIMIT_PER_MINUTE: int = 28
     SIRENE_PAGE_SIZE: int = 1000
     SIRENE_LOOKBACK_DAYS: int = 30
-    SIRENE_DEPARTEMENTS: list[str] = ["68", "67", "90", "88"]
-    SIRENE_NAF_EXCLUDE: list[str] = ["84", "85", "86", "87", "88"]
+    SIRENE_DEPARTEMENTS: CsvList = ["68", "67", "90", "88"]
+    SIRENE_NAF_EXCLUDE: CsvList = ["84", "85", "86", "87", "88"]
 
     # --- Enrichissement ---
     ENRICHMENT_ENABLED: bool = True
