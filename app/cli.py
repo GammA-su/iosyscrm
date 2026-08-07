@@ -11,10 +11,22 @@ import typer
 from app.config import get_settings
 from app.database.engine import session_scope
 from app.logging import configure_logging
+from app.models.collector import CollectorRun
 from app.models.enums import USER_ROLE_VALUES
 from app.models.user import User
+from app.repositories import collector as collector_repo
+from app.repositories import company as company_repo
+from app.repositories import enrichment as enrichment_repo
 from app.repositories import user as user_repo
 from app.services import auth
+from app.services.enrichment.orchestrator import EnrichmentOrchestrator
+from app.services.scoring import load_rules, rescore_all, rescore_company
+from app.services.sirene.client import SireneClient
+from app.services.sirene.collector import (
+    LAST_DISPOSITION_WATERMARK,
+    LAST_TRAITEMENT_WATERMARK,
+    SireneCollector,
+)
 
 app = typer.Typer(
     name="crm",
@@ -37,6 +49,67 @@ def main() -> None:
 @sirene_app.callback()
 def sirene_main() -> None:
     """Commandes de collecte SIRENE."""
+
+
+def _echo_collector_run(run: CollectorRun) -> None:
+    typer.echo(
+        f"Run {run.id} {run.status} — vus={run.records_seen}, "
+        f"nouveaux={run.records_new}, mis à jour={run.records_updated}, "
+        f"rejetés={run.records_rejected}, appels API={run.api_calls}"
+    )
+
+
+@sirene_app.command("sync")
+def sirene_sync() -> None:
+    """Lance la synchronisation incrémentale pilotée par les watermarks."""
+    settings = get_settings()
+    with SireneClient(settings) as client, session_scope() as db:
+        run = SireneCollector(settings, client=client).sync(db)
+    _echo_collector_run(run)
+
+
+@sirene_app.command("backfill")
+def sirene_backfill(
+    days: Annotated[
+        int,
+        typer.Option("--days", min=1, help="Nombre de jours de créations à recharger."),
+    ] = 30,
+) -> None:
+    """Recharge une fenêtre de créations sans modifier les watermarks."""
+    settings = get_settings()
+    with SireneClient(settings) as client, session_scope() as db:
+        run = SireneCollector(settings, client=client).backfill(db, days)
+    _echo_collector_run(run)
+
+
+@sirene_app.command("status")
+def sirene_status() -> None:
+    """Affiche les deux watermarks et les dix derniers runs."""
+    with session_scope() as db:
+        watermarks = {
+            LAST_TRAITEMENT_WATERMARK: collector_repo.get_watermark(db, LAST_TRAITEMENT_WATERMARK),
+            LAST_DISPOSITION_WATERMARK: collector_repo.get_watermark(
+                db, LAST_DISPOSITION_WATERMARK
+            ),
+        }
+        runs = collector_repo.list_runs(db, limit=10)
+
+    typer.echo("Watermarks")
+    for key, value in watermarks.items():
+        typer.echo(f"  {key:<28} {value or '-'}")
+
+    typer.echo("\n10 derniers runs")
+    typer.echo(
+        f"{'ID':>6}  {'TYPE':<20} {'STATUT':<8} {'VUS':>8} "
+        f"{'NOUVEAUX':>9} {'MAJ':>8} {'REJETES':>8} {'API':>5}  FIN"
+    )
+    for run in runs:
+        finished_at = run.finished_at.isoformat() if run.finished_at else "-"
+        typer.echo(
+            f"{run.id:>6}  {run.kind:<20} {run.status:<8} {run.records_seen:>8} "
+            f"{run.records_new:>9} {run.records_updated:>8} {run.records_rejected:>8} "
+            f"{run.api_calls:>5}  {finished_at}"
+        )
 
 
 @users_app.callback()
@@ -162,9 +235,124 @@ def score_main() -> None:
     """Commandes de calcul des scores."""
 
 
+@score_app.command("rebuild")
+def score_rebuild(
+    batch_size: Annotated[
+        int,
+        typer.Option("--batch-size", min=1, help="Nombre d'entreprises par lot."),
+    ] = 1000,
+) -> None:
+    """Recalcule le score de toutes les entreprises."""
+    with session_scope() as db:
+        summary = rescore_all(db, batch_size=batch_size)
+
+    typer.echo(
+        f"{summary.companies} entreprise(s) scorée(s) — jeu de règles {summary.ruleset_hash}"
+    )
+
+
+@score_app.command("explain")
+def score_explain(
+    siren: Annotated[str, typer.Option("--siren", help="SIREN de l'entreprise.")],
+) -> None:
+    """Détaille le score d'une entreprise, règle par règle."""
+    with session_scope() as db:
+        company = company_repo.get_by_siren(db, siren.strip())
+        if company is None:
+            typer.echo(f"Aucune entreprise pour le SIREN {siren}.", err=True)
+            raise typer.Exit(code=1)
+
+        rules = {rule.key: rule for rule in load_rules(db)}
+        result = rescore_company(db, company.id)
+        db.rollback()
+
+        name = company.denomination or company.nom_complet or "-"
+
+    if result is None:
+        typer.echo(f"Aucun contexte de scoring pour le SIREN {siren}.", err=True)
+        raise typer.Exit(code=1)
+
+    typer.echo(f"{siren} — {name}")
+    typer.echo(f"Score : {result.score}/100")
+    if not result.has_enrichment_data:
+        typer.echo("Aucun fait d'enrichissement : entreprise jamais analysée.")
+
+    typer.echo(f"\n{'RÈGLE':<18} {'PRÉDICAT':<16} {'POINTS':>7}  PARAMÈTRES")
+    for key, points in sorted(result.breakdown.items(), key=lambda item: -item[1]):
+        rule = rules[key]
+        typer.echo(f"{key:<18} {rule.predicate:<16} {points:>+7}  {rule.params}")
+    if not result.breakdown:
+        typer.echo("aucune règle déclenchée")
+
+
 @enrich_app.callback()
 def enrich_main() -> None:
     """Commandes d'enrichissement."""
+
+
+@enrich_app.command("company")
+def enrich_company(
+    siren: Annotated[str, typer.Option("--siren", help="SIREN de l'entreprise à enrichir.")],
+) -> None:
+    """Enrichit une entreprise, fournisseur par fournisseur."""
+    with session_scope() as db:
+        company = company_repo.get_by_siren(db, siren.strip())
+        if company is None:
+            typer.echo(f"Aucune entreprise pour le SIREN {siren}.", err=True)
+            raise typer.Exit(code=1)
+        runs = EnrichmentOrchestrator().enrich_company(db, company)
+        lines = [f"  {run.provider:<16} {run.status:<8} faits={run.facts_written}" for run in runs]
+
+    typer.echo(f"SIREN {siren} — {len(lines)} fournisseur(s) exécuté(s)")
+    for line in lines:
+        typer.echo(line)
+
+
+@enrich_app.command("batch")
+def enrich_batch(
+    size: Annotated[
+        int | None,
+        typer.Option("--size", min=1, help="Nombre d'entreprises à traiter."),
+    ] = None,
+) -> None:
+    """Traite un lot d'entreprises selon la priorité de la section 6.6."""
+    with session_scope() as db:
+        summary = EnrichmentOrchestrator().enrich_batch(db, size)
+
+    typer.echo(
+        f"Lot terminé — sélectionnées={summary.selected}, "
+        f"exécutions réussies={summary.succeeded}, en échec={summary.failed}"
+    )
+
+
+@enrich_app.command("stats")
+def enrich_stats() -> None:
+    """Affiche l'état de l'enrichissement."""
+    with session_scope() as db:
+        by_field = enrichment_repo.count_facts_by_field(db)
+        by_source = enrichment_repo.count_facts_by_source(db)
+        expired = enrichment_repo.count_expired_facts(db)
+        runs = enrichment_repo.list_runs(db, limit=10)
+        run_lines = [
+            f"{run.id:>6}  {run.provider:<16} {run.status:<8} faits={run.facts_written}"
+            for run in runs
+        ]
+
+    typer.echo("Faits valides par champ")
+    for field_name, count in by_field:
+        typer.echo(f"  {field_name:<28} {count:>6}")
+    if not by_field:
+        typer.echo("  aucun fait valide")
+
+    typer.echo("\nFaits valides par fournisseur")
+    for source, count in by_source:
+        typer.echo(f"  {source:<28} {count:>6}")
+
+    typer.echo(f"\nFaits expirés : {expired}")
+
+    typer.echo("\n10 dernières exécutions")
+    for line in run_lines:
+        typer.echo(line)
 
 
 app.add_typer(sirene_app, name="sirene")

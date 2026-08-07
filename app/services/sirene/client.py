@@ -261,6 +261,8 @@ class SireneClient:
             },
         )
         self._limiter = limiter or RateLimiter(self._settings.SIRENE_RATE_LIMIT_PER_MINUTE)
+        self._request_count = 0
+        self._request_count_lock = threading.Lock()
         self._retrying: Retrying = Retrying(
             retry=retry_if_exception_type(RETRYABLE_ERRORS),
             stop=stop_after_attempt(RETRY_ATTEMPTS),
@@ -283,6 +285,12 @@ class SireneClient:
         self.close()
 
     # --- Transport ------------------------------------------------------
+
+    @property
+    def request_count(self) -> int:
+        """Nombre total de tentatives HTTP, retries compris."""
+        with self._request_count_lock:
+            return self._request_count
 
     def _handle_status(self, response: httpx.Response, path: str) -> None:
         """Traduit le code de retour en exception, code par code (section 5.1)."""
@@ -314,6 +322,8 @@ class SireneClient:
     def _request(self, path: str, params: dict[str, Any]) -> dict[str, Any]:
         """Un appel, quota respecté. Lève une erreur typée selon le code."""
         self._limiter.acquire()
+        with self._request_count_lock:
+            self._request_count += 1
         response = self._client.get(f"{self._base_url}{path}", params=params)
         self._handle_status(response, path)
         try:

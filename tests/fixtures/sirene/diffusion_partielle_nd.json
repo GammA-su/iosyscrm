@@ -1,0 +1,89 @@
+{
+  "header": {
+    "statut": 200,
+    "message": "OK",
+    "total": 2,
+    "nombre": 2,
+    "curseur": "*",
+    "curseurSuivant": "*"
+  },
+  "etablissements": [
+    {
+      "siren": "104514823",
+      "siret": "10451482300012",
+      "statutDiffusionEtablissement": "P",
+      "dateCreationEtablissement": "2026-08-01",
+      "trancheEffectifsEtablissement": "NN",
+      "dateDernierTraitementEtablissement": "2026-05-06T11:06:56.888",
+      "etablissementSiege": true,
+      "activitePrincipaleNAF25Etablissement": "96.99G",
+      "uniteLegale": {
+        "denominationUniteLegale": "[ND]",
+        "nomUniteLegale": "[ND]",
+        "prenomUsuelUniteLegale": "[ND]",
+        "categorieJuridiqueUniteLegale": "1000",
+        "trancheEffectifsUniteLegale": "NN"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "[ND]",
+        "typeVoieEtablissement": "[ND]",
+        "libelleVoieEtablissement": "[ND]",
+        "complementAdresseEtablissement": "[ND]",
+        "codePostalEtablissement": "[ND]",
+        "libelleCommuneEtablissement": "BUSSANG",
+        "codeCommuneEtablissement": "88081"
+      },
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-08-01",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "96.09Z",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    },
+    {
+      "siren": "107401085",
+      "siret": "10740108500017",
+      "statutDiffusionEtablissement": "P",
+      "dateCreationEtablissement": "2026-07-27",
+      "trancheEffectifsEtablissement": "NN",
+      "dateDernierTraitementEtablissement": "2026-08-05T20:00:06.872",
+      "etablissementSiege": true,
+      "activitePrincipaleNAF25Etablissement": "47.12H",
+      "uniteLegale": {
+        "denominationUniteLegale": null,
+        "nomUniteLegale": "PAUTLER",
+        "prenomUsuelUniteLegale": "EDDIE",
+        "categorieJuridiqueUniteLegale": "1000",
+        "trancheEffectifsUniteLegale": "NN"
+      },
+      "adresseEtablissement": {
+        "numeroVoieEtablissement": "[ND]",
+        "typeVoieEtablissement": "[ND]",
+        "libelleVoieEtablissement": "[ND]",
+        "complementAdresseEtablissement": "[ND]",
+        "codePostalEtablissement": "[ND]",
+        "libelleCommuneEtablissement": "INGWILLER",
+        "codeCommuneEtablissement": "67222"
+      },
+      "periodesEtablissement": [
+        {
+          "dateFin": null,
+          "dateDebut": "2026-08-05",
+          "etatAdministratifEtablissement": "F",
+          "activitePrincipaleEtablissement": "47.99A",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        },
+        {
+          "dateFin": "2026-08-04",
+          "dateDebut": "2026-07-27",
+          "etatAdministratifEtablissement": "A",
+          "activitePrincipaleEtablissement": "47.99A",
+          "nomenclatureActivitePrincipaleEtablissement": "NAFRev2"
+        }
+      ]
+    }
+  ]
+}

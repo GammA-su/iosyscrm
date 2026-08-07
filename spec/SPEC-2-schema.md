@@ -7,6 +7,8 @@ Numérotation des sections conservée : les renvois du type « section 5.2 » re
 
 ## 3. Schéma de base de données
 
+Schéma à jour au lot T4-bis (migration 0006).
+
 DDL de référence. Alembic doit produire exactement ce schéma.
 
 ### 3.1 Extensions et types
@@ -65,6 +67,8 @@ CREATE INDEX idx_companies_denomination_trgm ON companies
     USING gin (coalesce(denomination, nom_complet) gin_trgm_ops);
 CREATE INDEX idx_companies_actives           ON companies (date_creation DESC)
     WHERE etat_administratif = 'A';
+CREATE INDEX idx_companies_prospectables     ON companies (date_creation DESC)
+    WHERE etat_administratif = 'A' AND statut_diffusion = 'O';
 ```
 
 **Décisions justifiées :**
@@ -216,7 +220,8 @@ CREATE TABLE contacts (
     is_primary    BOOLEAN         NOT NULL DEFAULT FALSE,
     verified_at   TIMESTAMPTZ,
     created_at    TIMESTAMPTZ     NOT NULL DEFAULT now(),
-    CONSTRAINT uq_contact UNIQUE (company_id, channel, value)
+    CONSTRAINT uq_contact UNIQUE (company_id, channel, value),
+    CONSTRAINT contacts_confidence_check CHECK (confidence BETWEEN 0 AND 1)
 );
 
 CREATE UNIQUE INDEX idx_contact_primary ON contacts (company_id, channel)
@@ -335,6 +340,7 @@ CREATE TABLE collector_runs (
     records_seen   INTEGER     NOT NULL DEFAULT 0,
     records_new    INTEGER     NOT NULL DEFAULT 0,
     records_updated INTEGER    NOT NULL DEFAULT 0,
+    records_rejected INTEGER   NOT NULL DEFAULT 0,
     api_calls      INTEGER     NOT NULL DEFAULT 0,
     window_start   TIMESTAMPTZ,
     window_end     TIMESTAMPTZ,

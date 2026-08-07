@@ -1,0 +1,83 @@
+{
+  "organization": {
+    "legal": {
+      "registration_number": "912345680",
+      "person_type": "LegalEntity",
+      "name": "STRASBOURG IMMOBILIER CONSEIL",
+      "legal_form": "SAS",
+      "creation_date": "2026-06-15"
+    },
+    "web_infos": {
+      "website_url": "https://strasbourg-immobilier-conseil.fr",
+      "linkedin": "https://www.linkedin.com/company/strasbourg-immobilier-conseil",
+      "facebook": "https://www.facebook.com/strasbourgimmobilierconseil",
+      "twitter": null,
+      "wikipedia": null
+    },
+    "contacts": {
+      "main_corporate_officier": {
+        "name": "MARTIN Claire",
+        "firstName": "Claire",
+        "lastName": "MARTIN",
+        "birth_date": "1978-04-12",
+        "role": "Présidente"
+      },
+      "corporate_officiers": [
+        {
+          "firstName": "Claire",
+          "lastName": "MARTIN",
+          "birth_date": "1978-04-12",
+          "role": "Présidente"
+        },
+        {
+          "firstName": "Pierre",
+          "lastName": "DURAND",
+          "birth_date": "1982-11-03",
+          "role": "Directeur général"
+        }
+      ]
+    },
+    "beneficiaires_effectifs": [
+      {
+        "firstName": "Claire",
+        "lastName": "MARTIN",
+        "birth_date": "1978-04-12",
+        "pourcentage_parts": 60.0,
+        "details_parts_indirectes": "SCI MARTIN PATRIMOINE",
+        "details_votes_indirects": "60% via SCI MARTIN PATRIMOINE"
+      },
+      {
+        "firstName": "Pierre",
+        "lastName": "DURAND",
+        "birth_date": "1982-11-03",
+        "pourcentage_parts": 40.0,
+        "details_parts_indirectes": null,
+        "details_votes_indirects": null
+      }
+    ]
+  },
+  "financials": {
+    "last_staff": 3,
+    "last_turnover": 480000,
+    "last_year": 2025
+  },
+  "contacts": {
+    "email": "claire.martin@strasbourg-immobilier-conseil.fr",
+    "emails": [
+      "contact@strasbourg-immobilier-conseil.fr",
+      "noreply@strasbourg-immobilier-conseil.fr"
+    ],
+    "phones": [
+      "03 88 12 34 56",
+      "08 92 70 12 34"
+    ],
+    "corporate_officiers": [
+      {
+        "firstName": "Claire",
+        "lastName": "MARTIN",
+        "birth_date": "1978-04-12",
+        "email": "claire.martin@perso-exemple.fr"
+      }
+    ]
+  }
+}

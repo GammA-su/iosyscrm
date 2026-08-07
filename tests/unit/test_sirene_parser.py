@@ -1,5 +1,6 @@
 """Normalisation d'un établissement SIRENE (section 5.3)."""
 
+import copy
 from collections.abc import Callable
 from datetime import UTC, date, datetime
 from typing import Any
@@ -25,23 +26,23 @@ def first_etablissement(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def test_personne_morale_uses_the_denomination(load_fixture: FixtureLoader) -> None:
-    raw = first_etablissement(load_fixture("sirene/page_1.json"))
+    raw = first_etablissement(load_fixture("sirene/page_2.json"))
 
     payload = parse_etablissement(raw)
 
-    assert payload.siren == "912345678"
-    assert payload.siret_siege == "91234567800015"
-    assert payload.denomination == "ALSACE NUMERIQUE"
+    assert payload.siren == "912345680"
+    assert payload.siret_siege == "91234568000017"
+    assert payload.denomination == "STRASBOURG IMMOBILIER CONSEIL"
     assert payload.nom_complet is None
     assert payload.is_personne_physique is False
-    assert payload.categorie_juridique == "5710"
-    assert payload.activite_principale == "62.01Y"
-    assert payload.tranche_effectifs == "02"
+    assert payload.categorie_juridique == "5499"
+    assert payload.activite_principale == "68.31Y"
+    assert payload.tranche_effectifs == "01"
     assert payload.etat_administratif == "A"
     assert payload.statut_diffusion == "O"
-    assert payload.date_creation == date(2026, 6, 12)
-    # 09:41:22 heure de Paris en juin (UTC+2) -> 07:41:22 UTC.
-    assert payload.date_dernier_traitement == datetime(2026, 6, 18, 7, 41, 22, tzinfo=UTC)
+    assert payload.date_creation == date(2026, 6, 15)
+    # 08:15:44 heure de Paris en juin (UTC+2) -> 06:15:44 UTC.
+    assert payload.date_dernier_traitement == datetime(2026, 6, 20, 6, 15, 44, tzinfo=UTC)
 
 
 def test_personne_physique_builds_the_full_name(load_fixture: FixtureLoader) -> None:
@@ -94,6 +95,77 @@ def test_partial_diffusion_personne_physique_is_detected_by_legal_category(
     assert payload.categorie_juridique == "1000"
     assert payload.is_personne_physique is True
     assert payload.nom_complet is None
+
+
+# --- Valeurs non diffusibles ([ND]) -------------------------------------
+
+
+def test_non_diffusible_marker_becomes_none_on_every_text_field(
+    load_fixture: FixtureLoader,
+) -> None:
+    """L'API renvoie « [ND] », pas une absence : c'est au parser de trancher."""
+    raw = first_etablissement(load_fixture("sirene/diffusion_partielle_nd.json"))
+    assert raw["uniteLegale"]["denominationUniteLegale"] == "[ND]"
+    assert raw["adresseEtablissement"]["libelleVoieEtablissement"] == "[ND]"
+
+    payload = parse_etablissement(raw)
+
+    assert payload.denomination is None
+    assert payload.adresse_numero is None
+    assert payload.adresse_type_voie is None
+    assert payload.adresse_libelle_voie is None
+    assert payload.adresse_complement is None
+    assert payload.code_postal is None
+    # Ce que l'INSEE ne masque pas reste exploitable.
+    assert payload.commune == "BUSSANG"
+    assert payload.code_commune == "88081"
+    assert payload.departement == "88"
+
+
+def test_two_non_diffusible_names_produce_none_not_a_joined_marker(
+    load_fixture: FixtureLoader,
+) -> None:
+    """Le bug corrigé : `nom_complet` valait « [ND] [ND] » en base."""
+    raw = first_etablissement(load_fixture("sirene/diffusion_partielle_nd.json"))
+    assert raw["uniteLegale"]["nomUniteLegale"] == "[ND]"
+    assert raw["uniteLegale"]["prenomUsuelUniteLegale"] == "[ND]"
+
+    payload = parse_etablissement(raw)
+
+    assert payload.nom_complet is None
+    assert payload.nom_complet != "[ND] [ND]"
+    assert payload.nom_complet != ""
+    # La catégorie juridique, elle, n'est pas masquée.
+    assert payload.is_personne_physique is True
+
+
+def test_partial_diffusion_with_a_clear_name_keeps_it(
+    load_fixture: FixtureLoader,
+) -> None:
+    """Le masquage INSEE est irrégulier : « P » n'implique pas « [ND] »."""
+    raw = load_fixture("sirene/diffusion_partielle_nd.json")["etablissements"][1]
+
+    payload = parse_etablissement(raw)
+
+    assert payload.statut_diffusion == "P"
+    assert payload.is_diffusion_partielle is True
+    assert payload.nom_complet == "PAUTLER EDDIE"
+    assert payload.adresse_libelle_voie is None
+
+
+def test_non_diffusible_headcount_range_is_an_absence() -> None:
+    """« [ND] » est traité au même niveau que « NN »."""
+    payload = parse_etablissement(
+        {
+            "siren": "919000111",
+            "siret": "91900011100019",
+            "statutDiffusionEtablissement": "P",
+            "trancheEffectifsEtablissement": "[ND]",
+            "uniteLegale": {"trancheEffectifsUniteLegale": "[ND]"},
+        }
+    )
+
+    assert payload.tranche_effectifs is None
 
 
 def test_legal_category_wins_over_the_absence_of_a_patronymic_name() -> None:
@@ -179,12 +251,12 @@ def test_address_is_flattened(load_fixture: FixtureLoader) -> None:
 
     payload = parse_etablissement(raw)
 
-    assert payload.adresse_numero == "4"
-    assert payload.adresse_type_voie == "AVENUE"
-    assert payload.adresse_libelle_voie == "DE COLMAR"
-    assert payload.adresse_complement == "BATIMENT B"
-    assert payload.code_postal == "68100"
-    assert payload.code_commune == "68224"
+    assert payload.adresse_numero == "31"
+    assert payload.adresse_type_voie == "RUE"
+    assert payload.adresse_libelle_voie == "D'ALEMBERT"
+    assert payload.adresse_complement is None
+    assert payload.code_postal == "02100"
+    assert payload.code_commune == "02691"
 
 
 def test_raw_payload_is_preserved(load_fixture: FixtureLoader) -> None:
@@ -196,7 +268,7 @@ def test_raw_payload_is_preserved(load_fixture: FixtureLoader) -> None:
     assert payload.raw["siren"] == raw["siren"]
     assert payload.raw["adresseEtablissement"] == raw["adresseEtablissement"]
     assert payload.raw["periodesEtablissement"] == raw["periodesEtablissement"]
-    assert payload.raw["nic"] == "00015"
+    assert payload.raw["nic"] == "00065"
     assert payload.raw["nombrePeriodesEtablissement"] == 1
 
 
@@ -206,11 +278,11 @@ def test_raw_payload_is_preserved(load_fixture: FixtureLoader) -> None:
 def test_naf25_is_preferred_over_the_period_code(load_fixture: FixtureLoader) -> None:
     """NAF 2025 est la nomenclature en vigueur ; NAFRev2 n'est qu'un repli."""
     raw = first_etablissement(load_fixture("sirene/page_1.json"))
-    assert raw["periodesEtablissement"][0]["activitePrincipaleEtablissement"] == "62.01Z"
+    assert raw["periodesEtablissement"][0]["activitePrincipaleEtablissement"] == "32.12Z"
 
     payload = parse_etablissement(raw)
 
-    assert payload.activite_principale == "62.01Y"
+    assert payload.activite_principale == "32.12Y"
     assert payload.raw[NOMENCLATURE_RAW_KEY] == "NAF2025"
 
 
@@ -263,21 +335,22 @@ def test_missing_activity_leaves_the_nomenclature_empty(
 
 
 def test_establishment_headcount_range_wins(load_fixture: FixtureLoader) -> None:
-    raw = load_fixture("sirene/page_1.json")["etablissements"][1]
-    assert raw["trancheEffectifsEtablissement"] == "01"
+    raw = copy.deepcopy(load_fixture("sirene/page_2.json")["etablissements"][1])
+    raw["uniteLegale"]["trancheEffectifsUniteLegale"] = "03"
+    assert raw["trancheEffectifsEtablissement"] == "02"
     assert raw["uniteLegale"]["trancheEffectifsUniteLegale"] == "03"
 
-    assert parse_etablissement(raw).tranche_effectifs == "01"
+    assert parse_etablissement(raw).tranche_effectifs == "02"
 
 
 def test_nn_headcount_range_falls_back_to_the_legal_unit(
     load_fixture: FixtureLoader,
 ) -> None:
     """« NN » signifie « non renseigné » : c'est une absence, pas une valeur."""
-    raw = first_etablissement(load_fixture("sirene/page_1.json"))
+    raw = first_etablissement(load_fixture("sirene/page_2.json"))
     assert raw["trancheEffectifsEtablissement"] == "NN"
 
-    assert parse_etablissement(raw).tranche_effectifs == "02"
+    assert parse_etablissement(raw).tranche_effectifs == "01"
 
 
 def test_nn_everywhere_stores_none() -> None:
@@ -295,6 +368,33 @@ def test_nn_everywhere_stores_none() -> None:
 
 
 # --- Minimisation des données personnelles ------------------------------
+
+
+def test_sanitize_raw_on_complete_api_payload(load_fixture: FixtureLoader) -> None:
+    """Seules les clés personnelles sont retirées du payload API intégral."""
+    page = load_fixture("sirene/page_1.json")
+    personal_prefixes = ("sexe", "prenom1", "prenom2", "prenom3", "prenom4", "pseudonyme")
+
+    for raw in page["etablissements"]:
+        unite = raw["uniteLegale"]
+        personal_keys = {key for key in unite if key.startswith(personal_prefixes)}
+        assert personal_keys == {
+            "sexeUniteLegale",
+            "prenom1UniteLegale",
+            "prenom2UniteLegale",
+            "prenom3UniteLegale",
+            "prenom4UniteLegale",
+            "pseudonymeUniteLegale",
+        }
+
+        expected = copy.deepcopy(raw)
+        for key in personal_keys:
+            del expected["uniteLegale"][key]
+
+        sanitized = sanitize_raw(raw)
+
+        assert personal_keys.isdisjoint(sanitized["uniteLegale"])
+        assert sanitized == expected
 
 
 def test_sanitize_raw_drops_personal_fields(load_fixture: FixtureLoader) -> None:
@@ -450,6 +550,27 @@ def test_malformed_dates_are_ignored() -> None:
 
     assert payload.date_creation is None
     assert payload.date_dernier_traitement is None
+
+
+def test_missing_required_fields_are_reported() -> None:
+    """Les colonnes `NOT NULL` manquantes sont nommées, pas devinées."""
+    payload = parse_etablissement(
+        {
+            "siren": "919000112",
+            "siret": "91900011200017",
+            "statutDiffusionEtablissement": "O",
+        }
+    )
+
+    assert payload.missing_required_fields == ("date_creation", "etat_administratif")
+    assert payload.is_storable is False
+
+
+def test_a_complete_payload_is_storable(load_fixture: FixtureLoader) -> None:
+    payload = parse_etablissement(first_etablissement(load_fixture("sirene/page_2.json")))
+
+    assert payload.missing_required_fields == ()
+    assert payload.is_storable is True
 
 
 def test_empty_payload_defaults_to_open_diffusion() -> None:

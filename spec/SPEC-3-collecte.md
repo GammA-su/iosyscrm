@@ -74,7 +74,9 @@ uv run crm sirene status                  # watermarks + 10 derniers runs
 
 ### 6.1 Ordre des fournisseurs
 
-L'orchestrateur exécute les fournisseurs dans l'ordre et s'arrête dès qu'il a l'information cherchée avec une confiance suffisante.
+L'orchestrateur exécute les fournisseurs **dans l'ordre du tableau ci-dessous, tous, à chaque exécution**. Chacun ouvre son `enrichment_runs`, et l'échec de l'un n'empêche pas les suivants.
+
+La règle d'arrêt anticipé — retenir la première valeur obtenue avec une confiance suffisante — s'applique **au sein d'une même exécution**, pour départager deux fournisseurs qui renseignent le même champ. Elle ne dispense jamais d'exécuter un fournisseur : une donnée déjà présente en base n'est pas un verrou. Sauter `contact_extract` parce qu'un contact existe déjà rendrait toute ré-extraction impossible dès qu'un contact obsolète ou saisi à la main est présent. La redondance est traitée par l'unicité `uq_contact` (le contact le plus fiable l'emporte) et par le TTL des faits.
 
 | Rang | Fournisseur | Fournit | Confiance |
 |---|---|---|---|
@@ -161,18 +163,38 @@ Le score est recalculé par un job nocturne et à chaque fin d'enrichissement. I
 
 | key | predicate | params | points |
 |---|---|---|---|
-| `no_website` | `fact_missing` | `{"field": "website_url"}` | **+30** |
+| `no_website` | `fact_equals` | `{"field": "has_website", "value": false}` | **+30** |
+| `never_enriched` | `fact_missing` | `{"field": "has_website"}` | +5 |
 | `weak_website` | `fact_lt` | `{"field": "website_quality_score", "value": 50}` | **+25** |
 | `no_https` | `fact_equals` | `{"field": "website_https", "value": false}` | +10 |
 | `not_responsive` | `fact_equals` | `{"field": "website_responsive", "value": false}` | +10 |
-| `very_recent` | `age_days_lt` | `{"days": 30}` | +20 |
-| `recent` | `age_days_lt` | `{"days": 90}` | +10 |
+| `very_recent` | `age_days_lt` | `{"days": 30}` | +10 |
 | `has_email` | `has_contact` | `{"channel": "email"}` | +15 |
 | `has_phone` | `has_contact` | `{"channel": "phone"}` | +10 |
 | `target_sector` | `naf_prefix_in` | `{"prefixes": ["41","43","68","69","70","71","96"]}` | +10 |
-| `local` | `departement_in` | `{"codes": ["68","67","90"]}` | +10 |
+
+Deux règles restent en base mais **inactives** (`is_active = false`), mises en sommeil par la migration 0008 :
+
+| key | predicate | params | points | réactivable quand |
+|---|---|---|---|---|
+| `recent` | `age_days_lt` | `{"days": 90}` | +10 | `SIRENE_LOOKBACK_DAYS` dépasse 30 |
+| `local` | `departement_in` | `{"codes": ["68","67","90","88"]}` | +10 | `SIRENE_DEPARTEMENTS` s'élargit |
 
 Score final borné à `[0, 100]`. `breakdown` conserve le détail des règles déclenchées, ce qui rend le score explicable dans l'interface — indispensable pour lui faire confiance.
+
+**`no_website` et `never_enriched` sont deux états opposés, pas deux variantes du même.** Une absence de site **constatée** (`has_website = false`) est le signal commercial le plus fort du portefeuille : +30. Une fiche **jamais analysée** ne dit rien de l'entreprise, seulement de notre file de traitement : +5, de quoi la rendre visible sans la placer devant un prospect qualifié. Les deux règles s'excluent mutuellement, `has_website` étant soit présent soit absent.
+
+Un fait `has_website` **expiré** est une absence de connaissance, pas une absence de site : la vue `company_facts` l'écarte, et c'est donc `never_enriched` qui se déclenche à nouveau.
+
+Version initiale de `no_website` : `fact_missing` sur `website_url`, remplacée par la migration 0007. Elle confondait les deux états et faisait remonter en tête de classement les fiches jamais regardées.
+
+**Une règle qui se déclenche sur la quasi-totalité du portefeuille doit être désactivée, pas repondérée.** Elle n'apporte aucune information : elle décale la moyenne sans jamais départager deux fiches, et donne l'illusion d'un score élevé là où il n'y a qu'une constante. C'est le cas de toute règle qui reprend un critère déjà appliqué à la collecte : `local` doublonnait `SIRENE_DEPARTEMENTS`, `recent` et `very_recent` doublonnaient ensemble `SIRENE_LOOKBACK_DAYS`. Constat mesuré sur les 635 premières lignes collectées : 561 d'entre elles partageaient la même tranche de score, pour quatre valeurs distinctes au total. Le contrôle à faire après toute modification du jeu de règles :
+
+```sql
+SELECT count(DISTINCT score) FROM (
+  SELECT DISTINCT ON (company_id) company_id, score
+  FROM score_snapshots ORDER BY company_id, computed_at DESC) s;
+```
 
 **Remarque de conception :** ces pondérations sont une hypothèse de départ, pas une vérité. Le croisement `score_snapshots` × `pipeline_events` prévu en 3.7 permettra de les réviser sur des résultats réels après quelques mois.
 

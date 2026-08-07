@@ -107,4 +107,12 @@ class Company(Base):
             text("date_creation DESC"),
             postgresql_where=text("etat_administratif = 'A'"),
         ),
+        # Sur les données réelles, environ 40 % des unités collectées sont en
+        # diffusion partielle : `idx_companies_actives` ferait parcourir près du
+        # double de lignes nécessaires pour lister les entreprises prospectables.
+        Index(
+            "idx_companies_prospectables",
+            text("date_creation DESC"),
+            postgresql_where=text("etat_administratif = 'A' AND statut_diffusion = 'O'"),
+        ),
     )

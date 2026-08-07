@@ -30,6 +30,15 @@ SIRENE_TIMEZONE: Final = ZoneInfo("Europe/Paris")
 #: Valeur signifiant « non renseigné » pour les tranches d'effectifs.
 TRANCHE_EFFECTIFS_NON_RENSEIGNEE: Final = "NN"
 
+#: Marqueur de non-diffusibilité. L'API ne retire pas les champs protégés :
+#: elle renvoie cette chaîne littérale. Elle est traitée comme une absence, au
+#: même titre que « NN », et sur TOUS les champs texte — sinon elle se
+#: propagerait dans les valeurs dérivées (`nom_complet` valait « [ND] [ND] »).
+NON_DIFFUSIBLE: Final = "[ND]"
+
+#: Colonnes `NOT NULL` de `companies` que l'API peut ne pas renseigner.
+REQUIRED_FIELDS: Final[tuple[str, ...]] = ("date_creation", "etat_administratif")
+
 #: Nomenclature d'activité en vigueur, portée par
 #: `activitePrincipaleNAF25Etablissement`.
 NOMENCLATURE_NAF25: Final = "NAF2025"
@@ -86,16 +95,37 @@ class CompanyPayload:
 
     @property
     def is_diffusion_partielle(self) -> bool:
-        """Unité à diffusion restreinte : à exclure de l'enrichissement (5.3)."""
+        """Unité à diffusion restreinte : à exclure de l'enrichissement (5.3).
+
+        Le statut de diffusion et la présence effective des valeurs sont
+        indépendants : l'INSEE masque de façon irrégulière, et une unité « P »
+        peut parfaitement porter un nom en clair.
+        """
         return self.statut_diffusion == PARTIAL_STATUT_DIFFUSION
+
+    @property
+    def missing_required_fields(self) -> tuple[str, ...]:
+        """Colonnes `NOT NULL` de `companies` que ce payload ne renseigne pas."""
+        return tuple(name for name in REQUIRED_FIELDS if getattr(self, name) is None)
+
+    @property
+    def is_storable(self) -> bool:
+        """Indique si le payload peut être écrit sans violer le schéma."""
+        return not self.missing_required_fields
 
 
 def _clean(value: Any) -> str | None:
-    """Chaîne non vide, débarrassée de ses espaces, sinon `None`."""
+    """Chaîne exploitable, sinon `None`.
+
+    Point de passage unique de tous les champs texte de l'API : c'est ici que
+    « [ND] » devient une absence, avant tout traitement dérivé.
+    """
     if not isinstance(value, str):
         return None
     stripped = value.strip()
-    return stripped or None
+    if not stripped or stripped == NON_DIFFUSIBLE:
+        return None
+    return stripped
 
 
 def _parse_date(value: Any) -> date | None:
@@ -199,7 +229,10 @@ def parse_etablissement(raw: dict[str, Any]) -> CompanyPayload:
     else:
         is_personne_physique = denomination is None and (nom is not None or prenom is not None)
 
-    nom_complet = " ".join(part for part in (nom, prenom) if part) if is_personne_physique else None
+    # `nom` et `prenom` sont déjà normalisés : deux valeurs non diffusibles
+    # donnent une liste vide, donc `None`, jamais « [ND] [ND] » ni « ».
+    name_parts = [part for part in (nom, prenom) if part is not None]
+    nom_complet = " ".join(name_parts) if is_personne_physique and name_parts else None
 
     code_commune = _clean(adresse.get("codeCommuneEtablissement"))
 
@@ -227,7 +260,7 @@ def parse_etablissement(raw: dict[str, Any]) -> CompanyPayload:
         statut_diffusion=_clean(raw.get("statutDiffusionEtablissement"))
         or DEFAULT_STATUT_DIFFUSION,
         denomination=denomination,
-        nom_complet=nom_complet or None,
+        nom_complet=nom_complet,
         is_personne_physique=is_personne_physique,
         categorie_juridique=categorie_juridique,
         activite_principale=activite_principale,

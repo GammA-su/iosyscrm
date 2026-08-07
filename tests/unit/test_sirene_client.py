@@ -123,8 +123,9 @@ def test_iter_siret_walks_every_page_and_stops_on_the_last(
 
     assert route.call_count == 3
     assert [item["siren"] for item in etablissements] == [
-        "912345678",
-        "912345679",
+        "000325175",
+        "001807254",
+        "005410220",
         "912345680",
         "912345681",
         "912345682",
@@ -226,6 +227,7 @@ def test_429_is_retried_after_a_wait_and_then_succeeds(
             page = client.search_siret("q")
 
     assert route.call_count == 2
+    assert client.request_count == 2
     assert page.total == 6
     # Une attente a bien eu lieu entre les deux tentatives, en plus de celles
     # éventuellement dues au seau à jetons.

@@ -42,6 +42,7 @@ class CollectorRun(Base):
     records_seen: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
     records_new: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
     records_updated: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    records_rejected: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
     api_calls: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
     window_start: Mapped[datetime | None] = mapped_column()
     window_end: Mapped[datetime | None] = mapped_column()

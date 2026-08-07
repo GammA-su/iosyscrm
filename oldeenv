@@ -1,6 +1,6 @@
 # --- Application ---
 APP_ENV=development                 # development | production
-APP_SECRET_KEY=                     # 64 caractères, obligatoire en production
+APP_SECRET_KEY=apikey                     # 64 caractères, obligatoire en production
 APP_BASE_URL=http://localhost:8000
 APP_LOG_LEVEL=INFO
 
@@ -10,7 +10,7 @@ DATABASE_POOL_SIZE=10
 DATABASE_ECHO=false
 
 # --- API SIRENE (INSEE) ---
-SIRENE_API_KEY=
+SIRENE_API_KEY=f6c51a62-6379-49e5-851a-626379c9e5fa
 SIRENE_BASE_URL=https://api.insee.fr/api-sirene/3.11
 SIRENE_RATE_LIMIT_PER_MINUTE=28     # marge sous le quota de 30
 SIRENE_PAGE_SIZE=1000
@@ -27,9 +27,9 @@ ENRICHMENT_TIMEOUT_SECONDS=10
 ENRICHMENT_TTL_DAYS=90
 ENRICHMENT_RESPECT_ROBOTS=true
 
-SOCIETEINFO_ENABLED=true
-SOCIETEINFO_API_KEY=              # transmise en paramètre de requête ?key=
-SOCIETEINFO_BASE_URL=https://societeinfo.com/app/rest/api/v2
+SOCIETEINFO_ENABLED=false
+SOCIETEINFO_API_KEY=
+SOCIETEINFO_BASE_URL=
 
 # --- Email ---
 MAIL_ENABLED=false                  # false = mode simulation, rien n'est envoyé
@@ -46,16 +46,9 @@ MAIL_MIN_INTERVAL_SECONDS=45
 # --- Conformité ---
 COMPLIANCE_RETENTION_DAYS=1095      # 3 ans après le dernier contact
 COMPLIANCE_CONTROLLER_NAME=IOSYS SAS
-COMPLIANCE_CONTROLLER_ADDRESS=
-COMPLIANCE_CONTACT_EMAIL=
+COMPLIANCE_CONTROLLER_ADDRESS=1 Avenue Bartholdi
+COMPLIANCE_CONTACT_EMAIL=contact@iosys.fr
 
 # --- Ordonnanceur ---
 SCHEDULER_ENABLED=true
 SCHEDULER_TIMEZONE=Europe/Paris
-
-# --- Infrastructure ---
-# Variables lues par docker-compose.yml et le Caddyfile, PAS par app/config.py.
-PGADMIN_EMAIL=admin@iosys.fr
-PGADMIN_PASSWORD=admin
-CADDY_DOMAIN=localhost
-CADDY_ACME_EMAIL=admin@iosys.fr

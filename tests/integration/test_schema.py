@@ -120,13 +120,15 @@ def test_reference_data_is_seeded(connection: Connection) -> None:
     rules = connection.execute(
         text("SELECT key, predicate, params, points FROM scoring_rules ORDER BY id")
     ).all()
-    assert len(rules) == 10
+    # 10 règles seedées en 0002, plus `never_enriched` ajoutée par 0007.
+    assert len(rules) == 11
     assert {rule.key: rule.points for rule in rules} == {
         "no_website": 30,
+        "never_enriched": 5,
         "weak_website": 25,
         "no_https": 10,
         "not_responsive": 10,
-        "very_recent": 20,
+        "very_recent": 10,
         "recent": 10,
         "has_email": 15,
         "has_phone": 10,
@@ -134,10 +136,14 @@ def test_reference_data_is_seeded(connection: Connection) -> None:
         "local": 10,
     }
     by_key = {rule.key: rule for rule in rules}
-    assert by_key["no_website"].predicate == "fact_missing"
-    assert by_key["no_website"].params == {"field": "website_url"}
+    # Recalibrage 0007 : absence CONSTATÉE contre absence d'analyse.
+    assert by_key["no_website"].predicate == "fact_equals"
+    assert by_key["no_website"].params == {"field": "has_website", "value": False}
+    assert by_key["never_enriched"].predicate == "fact_missing"
+    assert by_key["never_enriched"].params == {"field": "has_website"}
     assert by_key["weak_website"].params == {"field": "website_quality_score", "value": 50}
-    assert by_key["local"].params == {"codes": ["68", "67", "90"]}
+    # 0008 : `local` est mise en sommeil, et son paramètre corrigé (88 manquant).
+    assert by_key["local"].params == {"codes": ["68", "67", "90", "88"]}
 
 
 def test_companies_name_present_rejects_nameless_public_unit(connection: Connection) -> None:
